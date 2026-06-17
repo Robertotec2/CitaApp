@@ -15,15 +15,15 @@ public class CalculadoraController : ControllerBase
     }
 
     [HttpGet("sumar")]
-    public IActionResult Sumar(double a, double b) => Ok(_calculadora.Sumar(a, b));
+    public IActionResult Sumar(double a, double b) => Ok(new { resultado = _calculadora.Sumar(a, b) });
 
     [HttpGet("restar")]
-    public IActionResult Restar(double a, double b) => Ok(_calculadora.Restar(a, b));
+    public IActionResult Restar(double a, double b) => Ok(new { resultado = _calculadora.Restar(a, b) });
 
     [HttpGet("multiplicar")]
-    public IActionResult Multiplicar(double a, double b) => Ok(_calculadora.Multiplicar(a, b));
+    public IActionResult Multiplicar(double a, double b) => Ok(new { resultado = _calculadora.Multiplicar(a, b) });
 
     /// <summary>Division entre cero lanza OperacionInvalidaException -> 400 via middleware.</summary>
     [HttpGet("dividir")]
-    public IActionResult Dividir(double a, double b) => Ok(_calculadora.Dividir(a, b));
+    public IActionResult Dividir(double a, double b) => Ok(new { resultado = _calculadora.Dividir(a, b) });
 }
