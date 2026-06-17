@@ -9,9 +9,9 @@ namespace CitasApp.Application.Services;
 /// </summary>
 public class CalculadoraService : ICalculadoraService
 {
-    public double Sumar(double a, double b)       => a + b;
-    public double Restar(double a, double b)      => a - b;
-    public double Multiplicar(double a, double b) => a * b;
+    public double Sumar(double a, double b)       => Math.Round(a + b, 10);
+    public double Restar(double a, double b)      => Math.Round(a - b, 10);
+    public double Multiplicar(double a, double b) => Math.Round(a * b, 10);
 
     public double Dividir(double a, double b)
     {
