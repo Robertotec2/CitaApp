@@ -9,4 +9,5 @@ public interface IMedicoRepository
 {
     List<Medico>  ObtenerTodos();
     Medico?       ObtenerPorId(int id);
+    Medico        Agregar(Medico medico);
 }
