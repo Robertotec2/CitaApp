@@ -90,4 +90,29 @@ public class SqliteMedicoRepository : IMedicoRepository
             throw new PersistenciaException($"No se pudo leer el medico con Id {id}.", ex);
         }
     }
+
+    public Medico Agregar(Medico medico)
+    {
+        try
+        {
+            using var conn = new SqliteConnection(_connectionString);
+            conn.Open();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = @"
+                INSERT INTO Medicos (Nombre, Apellido, Especialidad, NumeroLicencia)
+                VALUES ($nombre, $apellido, $especialidad, $licencia);
+                SELECT last_insert_rowid();";
+            cmd.Parameters.AddWithValue("$nombre",      medico.Nombre      ?? string.Empty);
+            cmd.Parameters.AddWithValue("$apellido",    medico.Apellido    ?? string.Empty);
+            cmd.Parameters.AddWithValue("$especialidad",medico.Especialidad ?? string.Empty);
+            cmd.Parameters.AddWithValue("$licencia",    medico.NumeroLicencia ?? string.Empty);
+
+            medico.Id = (int)(long)(cmd.ExecuteScalar() ?? 0L);
+            return medico;
+        }
+        catch (SqliteException ex)
+        {
+            throw new PersistenciaException("No se pudo guardar el medico.", ex);
+        }
+    }
 }

@@ -37,6 +37,27 @@ public class JsonMedicoRepository : IMedicoRepository
         }
     }
 
+    private void EscribirTodos(List<Medico> medicos)
+    {
+        try
+        {
+            File.WriteAllText(_path, JsonSerializer.Serialize(medicos, Opciones));
+        }
+        catch (IOException ex)
+        {
+            throw new PersistenciaException("No se pudo escribir medicos.json.", ex);
+        }
+    }
+
     public Medico? ObtenerPorId(int id) =>
         ObtenerTodos().FirstOrDefault(m => m.Id == id);
+
+    public Medico Agregar(Medico medico)
+    {
+        var medicos = ObtenerTodos();
+        medico.Id = medicos.Count > 0 ? medicos.Max(m => m.Id) + 1 : 1;
+        medicos.Add(medico);
+        EscribirTodos(medicos);
+        return medico;
+    }
 }

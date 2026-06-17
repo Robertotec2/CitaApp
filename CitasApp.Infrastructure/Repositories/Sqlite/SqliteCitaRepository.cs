@@ -122,6 +122,27 @@ public class SqliteCitaRepository : ICitaRepository
         }
     }
 
+    public List<Cita> ObtenerPorMedico(int medicoId)
+    {
+        try
+        {
+            using var conn = Conectar();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText =
+                "SELECT Id, PacienteId, MedicoId, Fecha, Hora, Motivo, Estado FROM Citas WHERE MedicoId = $mid;";
+            cmd.Parameters.AddWithValue("$mid", medicoId);
+
+            var lista = new List<Cita>();
+            using var r = cmd.ExecuteReader();
+            while (r.Read()) lista.Add(LeerFila(r));
+            return lista;
+        }
+        catch (Exception ex) when (ex is SqliteException or FormatException)
+        {
+            throw new PersistenciaException("No se pudo leer las citas del medico.", ex);
+        }
+    }
+
     public Cita Agregar(Cita cita)
     {
         try
@@ -158,12 +179,28 @@ public class SqliteCitaRepository : ICitaRepository
             cmd.CommandText = "UPDATE Citas SET Estado = 'Confirmada' WHERE Id = $id;";
             cmd.Parameters.AddWithValue("$id", id);
 
-            var filasAfectadas = cmd.ExecuteNonQuery();
-            return filasAfectadas > 0;
+            return cmd.ExecuteNonQuery() > 0;
         }
         catch (SqliteException ex)
         {
             throw new PersistenciaException($"No se pudo confirmar la cita con Id {id}.", ex);
+        }
+    }
+
+    public bool Eliminar(int id)
+    {
+        try
+        {
+            using var conn = Conectar();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = "DELETE FROM Citas WHERE Id = $id;";
+            cmd.Parameters.AddWithValue("$id", id);
+
+            return cmd.ExecuteNonQuery() > 0;
+        }
+        catch (SqliteException ex)
+        {
+            throw new PersistenciaException($"No se pudo eliminar la cita con Id {id}.", ex);
         }
     }
 }

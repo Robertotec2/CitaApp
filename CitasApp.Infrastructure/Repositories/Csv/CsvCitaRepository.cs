@@ -93,6 +93,9 @@ public class CsvCitaRepository : ICitaRepository
     public List<Cita> ObtenerPorPaciente(int pacienteId) =>
         LeerTodos().Where(c => c.PacienteId == pacienteId).ToList();
 
+    public List<Cita> ObtenerPorMedico(int medicoId) =>
+        LeerTodos().Where(c => c.MedicoId == medicoId).ToList();
+
     public Cita Agregar(Cita cita)
     {
         var citas = LeerTodos();
@@ -109,6 +112,17 @@ public class CsvCitaRepository : ICitaRepository
         if (cita is null) return false;
 
         cita.Estado = "Confirmada";
+        EscribirTodos(citas);
+        return true;
+    }
+
+    public bool Eliminar(int id)
+    {
+        var citas    = LeerTodos();
+        var original = citas.Count;
+        citas.RemoveAll(c => c.Id == id);
+        if (citas.Count == original) return false;
+
         EscribirTodos(citas);
         return true;
     }
