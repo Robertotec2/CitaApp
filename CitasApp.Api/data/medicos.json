@@ -1,0 +1,5 @@
+[
+  { "id": 1, "nombre": "Carlos",  "apellido": "Perez",   "especialidad": "Cardiologia",  "numeroLicencia": "LIC-1001" },
+  { "id": 2, "nombre": "Laura",   "apellido": "Sanchez", "especialidad": "Pediatria",    "numeroLicencia": "LIC-1002" },
+  { "id": 3, "nombre": "Javier",  "apellido": "Torres",  "especialidad": "Neurologia",   "numeroLicencia": "LIC-1003" }
+]

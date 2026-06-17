@@ -1,0 +1,6 @@
+[
+  { "id": 1, "pacienteId": 1, "medicoId": 1, "fecha": "2026-06-20", "hora": "09:00", "motivo": "Revision general",  "estado": "Confirmada" },
+  { "id": 2, "pacienteId": 2, "medicoId": 2, "fecha": "2026-06-21", "hora": "10:30", "motivo": "Control pediatrico","estado": "Pendiente"  },
+  { "id": 3, "pacienteId": 1, "medicoId": 3, "fecha": "2026-06-22", "hora": "11:15", "motivo": "Dolor de cabeza",   "estado": "Pendiente"  },
+  { "id": 4, "pacienteId": 3, "medicoId": 1, "fecha": "2026-06-23", "hora": "08:45", "motivo": "Chequeo cardiaco",  "estado": "Confirmada" }
+]

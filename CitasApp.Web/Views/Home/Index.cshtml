@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<section class="hero">
+    <p class="hero-tag">// SISTEMA_DE_GESTION_MEDICA</p>
+    <h1 class="hero-title">CITAS<span class="hero-title-accent">//</span>APP</h1>
+    <p class="hero-sub">Arquitectura Hexagonal &middot; Puertos &amp; Adaptadores &middot; Persistencia intercambiable (Json / Csv / Sqlite)</p>
+</section>
+
+<div class="grid-cards">
+    <a class="cyber-card" asp-controller="Paciente" asp-action="Index">
+        <span class="cyber-card-tag">01</span>
+        <h2>Pacientes</h2>
+        <p>Consulta el registro completo de pacientes.</p>
+    </a>
+    <a class="cyber-card cyber-card--magenta" asp-controller="Medico" asp-action="Index">
+        <span class="cyber-card-tag">02</span>
+        <h2>Médicos</h2>
+        <p>Cuerpo médico y especialidades activas.</p>
+    </a>
+    <a class="cyber-card cyber-card--green" asp-controller="Cita" asp-action="Index">
+        <span class="cyber-card-tag">03</span>
+        <h2>Agenda</h2>
+        <p>Citas programadas y su estado actual.</p>
+    </a>
+    <a class="cyber-card" asp-controller="Calculadora" asp-action="Index">
+        <span class="cyber-card-tag">04</span>
+        <h2>Calculadora</h2>
+        <p>Módulo aritmético expuesto como puerto de dominio.</p>
+    </a>
+</div>

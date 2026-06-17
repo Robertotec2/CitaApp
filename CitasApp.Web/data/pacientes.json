@@ -1,0 +1,6 @@
+[
+  { "id": 1, "nombre": "Ana",   "apellido": "Garcia",   "email": "ana.garcia@mail.com",   "telefono": "999-555-0001" },
+  { "id": 2, "nombre": "Luis",  "apellido": "Martinez", "email": "luis.martinez@mail.com","telefono": "999-555-0002" },
+  { "id": 3, "nombre": "Maria", "apellido": "Lopez",    "email": "maria.lopez@mail.com",  "telefono": "999-555-0003" },
+  { "id": 4, "nombre": "Edith", "apellido": "Romero",   "email": "edith.romero@mail.com", "telefono": "999-555-0004" }
+]

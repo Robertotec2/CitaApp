@@ -1,0 +1,64 @@
+@model IEnumerable<Cita>
+@{
+    ViewData["Title"] = "Agenda de Citas";
+    var pacientes = ViewBag.Pacientes as List<Paciente>;
+    var medicos   = ViewBag.Medicos as List<Medico>;
+}
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert--green">@TempData["Mensaje"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert--danger">@TempData["Error"]</div>
+}
+
+<div class="panel-header">
+    <h1>Agenda de Citas</h1>
+    <a class="btn-cyber btn-cyber--green" asp-action="Agregar">+ Nueva cita</a>
+</div>
+
+<div class="table-wrap">
+    <table class="cyber-table cyber-table--green">
+        <thead>
+            <tr>
+                <th>ID</th><th>Paciente</th><th>Médico</th><th>Fecha</th><th>Hora</th><th>Motivo</th><th>Estado</th><th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cita in Model)
+            {
+                var paciente = pacientes?.FirstOrDefault(p => p.Id == cita.PacienteId);
+                var medico   = medicos?.FirstOrDefault(m => m.Id == cita.MedicoId);
+                <tr>
+                    <td>#@cita.Id.ToString("D3")</td>
+                    <td>@(paciente != null ? $"{paciente.Nombre} {paciente.Apellido}" : $"#{cita.PacienteId}")</td>
+                    <td>@(medico != null ? $"{medico.Nombre} {medico.Apellido}" : $"#{cita.MedicoId}")</td>
+                    <td>@cita.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@cita.Hora.ToString("HH:mm")</td>
+                    <td>@cita.Motivo</td>
+                    <td>
+                        @if (cita.Estado == "Confirmada")
+                        {
+                            <span class="pill pill--green">@cita.Estado</span>
+                        }
+                        else
+                        {
+                            <span class="pill pill--amber">@cita.Estado</span>
+                        }
+                    </td>
+                    <td>
+                        @if (cita.Estado != "Confirmada")
+                        {
+                            <form asp-action="Confirmar" method="post" class="inline-form">
+                                <input type="hidden" name="id" value="@cita.Id" />
+                                <button type="submit" class="btn-cyber btn-cyber--small btn-cyber--green">Confirmar</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

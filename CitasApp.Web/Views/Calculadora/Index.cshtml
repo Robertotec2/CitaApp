@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Calculadora";
+}
+
+<div class="form-card">
+    <h1>Módulo Aritmético</h1>
+    <p class="text-dim">Operaciones expuestas a traves del puerto de dominio ICalculadoraService.</p>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert--danger">@ViewBag.Error</div>
+    }
+    @if (ViewBag.Resultado != null)
+    {
+        <div class="alert alert--green">Resultado: <strong>@ViewBag.Resultado</strong></div>
+    }
+
+    <form asp-action="Calcular" method="post" class="cyber-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="a">Valor A</label>
+                <input type="number" step="any" name="a" id="a" value="@ViewBag.A" required />
+            </div>
+            <div class="form-group">
+                <label for="b">Valor B</label>
+                <input type="number" step="any" name="b" id="b" value="@ViewBag.B" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="operacion">Operación</label>
+            <select name="operacion" id="operacion">
+                <option value="sumar">Sumar (+)</option>
+                <option value="restar">Restar (−)</option>
+                <option value="multiplicar">Multiplicar (×)</option>
+                <option value="dividir">Dividir (÷)</option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-cyber btn-cyber--green">Calcular →</button>
+        </div>
+    </form>
+</div>

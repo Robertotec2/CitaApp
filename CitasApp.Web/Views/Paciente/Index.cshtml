@@ -1,0 +1,37 @@
+@model IEnumerable<Paciente>
+@{
+    ViewData["Title"] = "Pacientes";
+}
+
+<div class="panel-header">
+    <h1>Pacientes Registrados</h1>
+    <span class="pill pill--cyan">@Model.Count() en sistema</span>
+</div>
+
+<div class="table-wrap">
+    <table class="cyber-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var paciente in Model)
+            {
+                <tr>
+                    <td>#@paciente.Id.ToString("D3")</td>
+                    <td>@paciente.Nombre @paciente.Apellido</td>
+                    <td>@paciente.Email</td>
+                    <td>@paciente.Telefono</td>
+                    <td>
+                        <a class="btn-cyber btn-cyber--small" asp-action="Detalle" asp-route-id="@paciente.Id">Ver →</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,64 @@
+@{
+    ViewData["Title"] = "Nueva Cita";
+    var pacientes = ViewBag.Pacientes as List<Paciente>;
+    var medicos   = ViewBag.Medicos as List<Medico>;
+}
+
+<div class="form-card">
+    <h1>Agendar Nueva Cita</h1>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert--danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p>@error.ErrorMessage</p>
+            }
+        </div>
+    }
+
+    <form asp-action="Agregar" method="post" class="cyber-form">
+        <div class="form-group">
+            <label for="pacienteId">Paciente</label>
+            <select name="pacienteId" id="pacienteId" required>
+                <option value="">-- Selecciona --</option>
+                @foreach (var p in pacientes ?? new List<Paciente>())
+                {
+                    <option value="@p.Id">@p.Nombre @p.Apellido</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="medicoId">Médico</label>
+            <select name="medicoId" id="medicoId" required>
+                <option value="">-- Selecciona --</option>
+                @foreach (var m in medicos ?? new List<Medico>())
+                {
+                    <option value="@m.Id">@m.Nombre @m.Apellido — @m.Especialidad</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="date" name="fecha" id="fecha" required />
+            </div>
+            <div class="form-group">
+                <label for="hora">Hora</label>
+                <input type="time" name="hora" id="hora" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="motivo">Motivo</label>
+            <textarea name="motivo" id="motivo" rows="3" required></textarea>
+        </div>
+
+        <div class="form-actions">
+            <a class="btn-cyber" asp-action="Index">Cancelar</a>
+            <button type="submit" class="btn-cyber btn-cyber--green">Agendar →</button>
+        </div>
+    </form>
+</div>

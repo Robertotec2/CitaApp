@@ -1,0 +1,21 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="error-panel">
+    <h1 class="glitch-text">ERROR</h1>
+    <p class="text-dim">Algo se rompió en el sistema.</p>
+
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="alert alert--danger">@Model.Mensaje</div>
+    }
+
+    @if (Model.ShowRequestId)
+    {
+        <p class="text-dim">ID de seguimiento: <code>@Model.RequestId</code></p>
+    }
+
+    <a class="btn-cyber" asp-controller="Home" asp-action="Index">← Volver al inicio</a>
+</div>

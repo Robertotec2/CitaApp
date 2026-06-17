@@ -1,0 +1,17 @@
+@model Paciente
+@{
+    ViewData["Title"] = $"{Model.Nombre} {Model.Apellido}";
+}
+
+<div class="detail-card">
+    <span class="detail-tag">PACIENTE #@Model.Id.ToString("D3")</span>
+    <h1>@Model.Nombre @Model.Apellido</h1>
+    <dl class="detail-list">
+        <dt>Email</dt><dd>@Model.Email</dd>
+        <dt>Teléfono</dt><dd>@Model.Telefono</dd>
+    </dl>
+    <div class="detail-actions">
+        <a class="btn-cyber" asp-action="Index">← Volver</a>
+        <a class="btn-cyber btn-cyber--magenta" asp-controller="Cita" asp-action="PorPaciente" asp-route-pacienteId="@Model.Id">Ver citas →</a>
+    </div>
+</div>

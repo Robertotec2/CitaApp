@@ -1,0 +1,51 @@
+@model List<Cita>
+@{
+    var pacientes = ViewBag.Pacientes as List<Paciente>;
+    var medicos   = ViewBag.Medicos as List<Medico>;
+    var primero   = Model.FirstOrDefault();
+    var paciente  = pacientes?.FirstOrDefault(p => p.Id == primero?.PacienteId);
+    ViewData["Title"] = "Citas del paciente";
+}
+
+<div class="panel-header">
+    <h1>Citas de @(paciente != null ? $"{paciente.Nombre} {paciente.Apellido}" : "paciente")</h1>
+</div>
+
+@if (!Model.Any())
+{
+    <p class="text-dim">Este paciente no tiene citas registradas.</p>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="cyber-table cyber-table--green">
+            <thead>
+                <tr><th>Fecha</th><th>Hora</th><th>Médico</th><th>Motivo</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    var medico = medicos?.FirstOrDefault(m => m.Id == c.MedicoId);
+                    <tr>
+                        <td>@c.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@c.Hora.ToString("HH:mm")</td>
+                        <td>@(medico != null ? $"{medico.Nombre} {medico.Apellido}" : "—")</td>
+                        <td>@c.Motivo</td>
+                        <td>
+                            @if (c.Estado == "Confirmada")
+                            {
+                                <span class="pill pill--green">@c.Estado</span>
+                            }
+                            else
+                            {
+                                <span class="pill pill--amber">@c.Estado</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<a class="btn-cyber" asp-action="Index">← Ver todas las citas</a>
