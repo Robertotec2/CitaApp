@@ -1,5 +1,7 @@
 # CitasApp — Arquitectura Hexagonal (Puertos y Adaptadores)
 
+> .NET 8 · REST API + MVC · Persistencia intercambiable (Json / Csv / Sqlite)
+
 Proyecto unificado a partir de las 4 ramas de `ArqSoft-S05-Enrique`
 (`master`, `Api`, `Api-Calculadora`, `Hexagonal`), reescrito desde cero
 siguiendo Puertos y Adaptadores, con frontend Cyberpunk / Modern Night.
