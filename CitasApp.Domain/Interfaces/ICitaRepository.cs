@@ -12,6 +12,8 @@ public interface ICitaRepository
     List<Cita> ObtenerTodos();
     Cita?      ObtenerPorId(int id);
     List<Cita> ObtenerPorPaciente(int pacienteId);
+    List<Cita> ObtenerPorMedico(int medicoId);
     Cita       Agregar(Cita cita);
     bool       ConfirmarCita(int id);
+    bool       Eliminar(int id);
 }
