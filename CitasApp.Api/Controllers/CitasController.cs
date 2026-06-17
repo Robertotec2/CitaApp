@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CitasApp.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 public class CitasController : ControllerBase
 {
     private readonly CitaService _service;
