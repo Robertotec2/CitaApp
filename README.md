@@ -91,3 +91,13 @@ expuesto tanto en la API (`/api/calculadora/...`) como en una vista del Web
 (`/Calculadora`). Dividir entre cero lanza `OperacionInvalidaException` en
 vez de la excepcion generica `DivideByZeroException`, para mantener
 consistencia con el resto de las reglas de negocio.
+
+## Capturas de pantalla
+
+### Swagger — CitasApp API
+
+![Swagger CitasApp](docs/swagger-citas.png)
+
+### Swagger — Calculadora API
+
+![Swagger Calculadora](docs/swagger-calculadora.png)
