@@ -7,7 +7,7 @@ namespace CitasApp.Application.Services;
 /// <summary>
 /// Caso de uso de Medicos.
 /// </summary>
-public class MedicoService
+public class MedicoService : IMedicoService
 {
     private readonly IMedicoRepository _repository;
 

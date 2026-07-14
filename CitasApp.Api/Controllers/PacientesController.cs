@@ -1,4 +1,4 @@
-using CitasApp.Application.Services;
+using CitasApp.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CitasApp.Api.Controllers;
@@ -7,9 +7,9 @@ namespace CitasApp.Api.Controllers;
 [Route("api/[controller]")]
 public class PacientesController : ControllerBase
 {
-    private readonly PacienteService _service;
+    private readonly IPacienteService _service;
 
-    public PacientesController(PacienteService service)
+    public PacientesController(IPacienteService service)
     {
         _service = service;
     }

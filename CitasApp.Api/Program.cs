@@ -10,9 +10,9 @@ var dataFolder = Path.Combine(builder.Environment.ContentRootPath, "data");
 builder.Services.AddCitasInfrastructure(builder.Configuration, dataFolder);
 
 // ── 2. Casos de uso (Application) ─────────────────────────────────────────────
-builder.Services.AddScoped<PacienteService>();
-builder.Services.AddScoped<MedicoService>();
-builder.Services.AddScoped<CitaService>();
+builder.Services.AddScoped<IPacienteService, PacienteService>();
+builder.Services.AddScoped<IMedicoService, MedicoService>();
+builder.Services.AddScoped<ICitaService, CitaService>();
 builder.Services.AddScoped<ICalculadoraService, CalculadoraService>();
 
 // ── 3. Adaptador de entrada: API REST + Swagger ───────────────────────────────

@@ -8,7 +8,7 @@ namespace CitasApp.Application.Services;
 /// Caso de uso de Pacientes. No sabe si los datos vienen de Json, Csv o Sqlite —
 /// solo conoce el puerto IPacienteRepository.
 /// </summary>
-public class PacienteService
+public class PacienteService : IPacienteService
 {
     private readonly IPacienteRepository _repository;
 

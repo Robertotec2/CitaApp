@@ -8,7 +8,7 @@ namespace CitasApp.Application.Services;
 /// Caso de uso de Citas. Centraliza las reglas de negocio: una cita no puede
 /// crearse para un paciente o medico que no existe, sin motivo, ni en el pasado.
 /// </summary>
-public class CitaService
+public class CitaService : ICitaService
 {
     private readonly ICitaRepository     _citaRepository;
     private readonly IPacienteRepository _pacienteRepository;

@@ -1,5 +1,5 @@
-using CitasApp.Application.Services;
 using CitasApp.Domain.Exceptions;
+using CitasApp.Domain.Interfaces;
 using CitasApp.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,21 +7,26 @@ namespace CitasApp.Web.Controllers;
 
 public class CitaController : Controller
 {
-    private readonly CitaService     _service;
-    private readonly PacienteService _pacienteService;
-    private readonly MedicoService   _medicoService;
+    private readonly ICitaService     _service;
+    private readonly IPacienteService _pacienteService;
+    private readonly IMedicoService   _medicoService;
 
-    public CitaController(CitaService service, PacienteService pacienteService, MedicoService medicoService)
+    public CitaController(ICitaService service, IPacienteService pacienteService, IMedicoService medicoService)
     {
         _service         = service;
         _pacienteService = pacienteService;
         _medicoService   = medicoService;
     }
 
-    public IActionResult Index()
+    private void CargarListasParaFormulario()
     {
         ViewBag.Pacientes = _pacienteService.ObtenerTodos();
         ViewBag.Medicos   = _medicoService.ObtenerTodos();
+    }
+
+    public IActionResult Index()
+    {
+        CargarListasParaFormulario();
         return View(_service.ObtenerTodas());
     }
 
@@ -29,8 +34,7 @@ public class CitaController : Controller
     {
         try
         {
-            ViewBag.Pacientes = _pacienteService.ObtenerTodos();
-            ViewBag.Medicos   = _medicoService.ObtenerTodos();
+            CargarListasParaFormulario();
             return View(_service.ObtenerPorPaciente(pacienteId));
         }
         catch (EntidadNoEncontradaException)
@@ -42,8 +46,7 @@ public class CitaController : Controller
     [HttpGet]
     public IActionResult Agregar()
     {
-        ViewBag.Pacientes = _pacienteService.ObtenerTodos();
-        ViewBag.Medicos   = _medicoService.ObtenerTodos();
+        CargarListasParaFormulario();
         return View();
     }
 
@@ -68,8 +71,7 @@ public class CitaController : Controller
         catch (Exception ex) when (ex is EntidadNoEncontradaException or OperacionInvalidaException)
         {
             ModelState.AddModelError(string.Empty, ex.Message);
-            ViewBag.Pacientes = _pacienteService.ObtenerTodos();
-            ViewBag.Medicos   = _medicoService.ObtenerTodos();
+            CargarListasParaFormulario();
             return View();
         }
     }

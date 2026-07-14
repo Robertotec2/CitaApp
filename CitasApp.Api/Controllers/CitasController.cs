@@ -1,5 +1,5 @@
 using CitasApp.Api.DTOs;
-using CitasApp.Application.Services;
+using CitasApp.Domain.Interfaces;
 using CitasApp.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,9 +9,9 @@ namespace CitasApp.Api.Controllers;
 [Route("api/[controller]")]
 public class CitasController : ControllerBase
 {
-    private readonly CitaService _service;
+    private readonly ICitaService _service;
 
-    public CitasController(CitaService service)
+    public CitasController(ICitaService service)
     {
         _service = service;
     }
