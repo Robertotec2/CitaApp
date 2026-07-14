@@ -10,7 +10,7 @@
     <ProjectReference Include="..\CitasApp.Infrastructure\CitasApp.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="data\**\*.*">
+    <Content Update="data\**\*.*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
