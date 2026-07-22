@@ -50,3 +50,7 @@ Mas ligero que Controllers. Se descarto en favor de Controllers porque la conven
 | GET | /api/Calculadora/restar | Resta dos numeros |
 | GET | /api/Calculadora/multiplicar | Multiplica dos numeros |
 | GET | /api/Calculadora/dividir | Divide dos numeros (valida division entre cero) |
+
+## Suite de Pruebas Automatizadas (Actividad #37)
+* **Clases probadas:** Se implementaron pruebas unitarias con xUnit utilizando el patrón Arrange-Act-Assert para las clases `Cita`, `Paciente` y `Medico`.
+* **Justificación:** Se seleccionaron por ser los pilares fundamentales del modelo de dominio en la arquitectura hexagonal, garantizando la integridad de la lógica de negocio antes de integrarse con la API y la interfaz web.
