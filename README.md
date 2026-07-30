@@ -1,103 +1,216 @@
-# CitasApp — Arquitectura Hexagonal (Puertos y Adaptadores)
+# CitasApp - Sistema de Gestión Médica
 
-> .NET 8 · REST API + MVC · Persistencia intercambiable (Json / Csv / Sqlite)
+**Autor:** Roberto Balmes  
+**Curso:** Arquitectura de Software  
+**Stack principal:** ASP.NET Core (.NET 10) · Arquitectura Hexagonal (Puertos y Adaptadores)
 
-Proyecto unificado a partir de las 4 ramas de `ArqSoft-S05-Enrique`
-(`master`, `Api`, `Api-Calculadora`, `Hexagonal`), reescrito desde cero
-siguiendo Puertos y Adaptadores, con frontend Cyberpunk / Modern Night.
+---
 
-## Estructura
+## Descripción del proyecto
 
-```
-CitasApp/
-├── CitasApp.sln
-├── CitasApp.Domain/            Modelos, Puertos (interfaces), Excepciones de negocio
-├── CitasApp.Application/       Casos de uso (Services) — reglas de negocio
-├── CitasApp.Infrastructure/    Adaptadores: Json, Csv, Sqlite (intercambiables)
-├── CitasApp.Api/                Adaptador de entrada: REST API + Swagger
-└── CitasApp.Web/                Adaptador de entrada: MVC con UI Cyberpunk
-```
+**CitasApp** es un sistema de gestión médica académica que permite consultar pacientes y médicos, agendar/confirmar citas y exponer un módulo auxiliar de calculadora. La solución está organizada en capas desacopladas (Domain → Application → Infrastructure) con **dos adaptadores de entrada**:
 
-Regla de dependencias (hexagonal, de afuera hacia adentro):
+| Proyecto | Rol |
+|----------|-----|
+| `CitasApp.Web` | Aplicación **ASP.NET Core MVC** con dashboard/home cyberpunk y vistas Razor |
+| `CitasApp.Api` | **REST API** documentada con Swagger + middleware de excepciones |
+| `CitasApp.Domain` | Modelos, puertos (interfaces) y excepciones de negocio |
+| `CitasApp.Application` | Casos de uso (`PacienteService`, `MedicoService`, `CitaService`, `CalculadoraService`) |
+| `CitasApp.Infrastructure` | Adaptadores de persistencia **Json / Csv / Sqlite** (intercambiables) |
+| `CitasApp.Tests` | Suite de pruebas unitarias con **xUnit** |
+
+La pantalla de inicio (`Views/Home/Index.cshtml`) actúa como **dashboard de navegación** hacia Pacientes, Médicos, Agenda y Calculadora.
+
+La persistencia por defecto lee/escribe archivos JSON en la carpeta `data/` de cada host (`pacientes.json`, `medicos.json`, `citas.json`). El proveedor se cambia sin recompilar Domain ni Application.
 
 ```
 Api / Web  →  Application  →  Domain
 Api / Web  →  Infrastructure → Domain
 ```
 
-`Domain` no depende de nada. `Infrastructure` no depende de `Application` ni
-de `Api`/`Web`. Cambiar el motor de persistencia nunca obliga a tocar
-Domain, Application, ni los controladores.
+---
 
-## Cambiar el adaptador de persistencia (Json / Csv / Sqlite)
+## Arquitectura (visión C4 — Contenedor)
 
-En `appsettings.json` de **CitasApp.Api** o **CitasApp.Web**:
+```mermaid
+C4Container
+    title CitasApp — Diagrama de Contenedores (C4)
 
-```json
-"Persistencia": {
-  "Proveedor": "Json"   // o "Csv" / "Sqlite"
-}
+    Person(usuario, "Usuario / Estudiante", "Usa el dashboard MVC o consume la API")
+
+    System_Boundary(citasapp, "CitasApp") {
+        Container(web, "CitasApp.Web", "ASP.NET Core MVC", "Dashboard, vistas Razor, formularios de citas")
+        Container(api, "CitasApp.Api", "ASP.NET Core Web API", "REST + Swagger + ExceptionHandlingMiddleware")
+        Container(app, "CitasApp.Application", ".NET Class Library", "Casos de uso / reglas de negocio")
+        Container(domain, "CitasApp.Domain", ".NET Class Library", "Modelos, puertos, excepciones")
+        Container(infra, "CitasApp.Infrastructure", ".NET Class Library", "Repositorios Json/Csv/Sqlite")
+    }
+
+    SystemDb(files, "Persistencia local", "JSON / CSV / SQLite en carpeta data/")
+
+    Rel(usuario, web, "HTTPS")
+    Rel(usuario, api, "HTTPS / JSON")
+    Rel(web, app, "Invoca servicios")
+    Rel(api, app, "Invoca servicios")
+    Rel(app, domain, "Usa modelos y puertos")
+    Rel(infra, domain, "Implementa interfaces")
+    Rel(web, infra, "DI: AddCitasInfrastructure")
+    Rel(api, infra, "DI: AddCitasInfrastructure")
+    Rel(infra, files, "Lee/escribe")
 ```
 
-No se recompila nada mas: `DependencyInjection.AddCitasInfrastructure`
-(en `CitasApp.Infrastructure`) lee ese valor y conecta el Adaptador correcto
-a los Puertos del Dominio.
+Documentación de decisiones: ver `ADR-01-Roberto.md` (incorporación de la API REST) y `DECLARACION-IA.md`.
 
-## Como compilar y ejecutar
+---
 
-### Opcion A — Visual Studio / Rider / IntelliJ con plugin .NET
+## Stack tecnológico
 
-1. Abre `CitasApp.sln`.
-2. Click derecho en `CitasApp.Api` (o `CitasApp.Web`) → **Set as Startup Project**.
-3. F5 / Run.
-4. La API expone Swagger en `/swagger`. El Web corre en `/` con la UI Cyberpunk.
+| Área | Tecnología |
+|------|------------|
+| Runtime / framework | .NET 10 (`net10.0`), ASP.NET Core |
+| UI | Razor Views, CSS propio (`wwwroot/css/site.css`) |
+| API | Controllers + Swagger / OpenAPI (Swashbuckle) |
+| Persistencia | `System.Text.Json`, CSV plano, `Microsoft.Data.Sqlite` |
+| DI | Contenedor nativo de ASP.NET Core (`IServiceCollection`) |
+| Pruebas | xUnit, Microsoft.NET.Test.Sdk |
+| CI/CD | GitHub Actions (`.github/workflows/dotnet.yml`; referencia adicional `ci.yml`) |
+| Arquitectura | Hexagonal / Ports & Adapters + MVC |
 
-### Opcion B — Linea de comandos
+---
+
+## Patrones de diseño (según el código real)
+
+| Patrón | Dónde aparece | Para qué |
+|--------|---------------|----------|
+| **Inyección de Dependencias (DI)** | `CitasApp.Web/Program.cs`, `CitasApp.Api/Program.cs` | Registra servicios y repositorios en el contenedor IoC; los controladores reciben dependencias por constructor. |
+| **Repository + Ports & Adapters** | `IPacienteRepository`, `IMedicoRepository`, `ICitaRepository` en Domain; implementaciones en `Infrastructure/Repositories/{Json,Csv,Sqlite}` | Desacopla la lógica de negocio del motor de persistencia. |
+| **Factory Method / Abstract Factory (composición)** | `CitasApp.Infrastructure/DependencyInjection.AddCitasInfrastructure` | Según `Persistencia:Proveedor` (`Json` \| `Csv` \| `Sqlite`) instancia el adaptador correcto y lo registra contra el puerto. |
+| **Middleware (pipeline / “decorator” de request)** | `CitasApp.Api/Middleware/ExceptionHandlingMiddleware` | Envuelve el pipeline HTTP y traduce excepciones de Domain/Infrastructure a códigos HTTP JSON. |
+
+**No se encontró** una implementación clásica de **Observer** (`IObservable` / eventos de dominio) ni un **Decorator** GoF explícito sobre repositorios o servicios. El middleware es el acercamiento más cercano a “decorar” el flujo de request.
+
+---
+
+## CI/CD y pruebas
+
+### GitHub Actions
+
+El workflow activo está en [`.github/workflows/dotnet.yml`](.github/workflows/dotnet.yml):
+
+1. Se dispara en `push` y `pull_request` hacia `master`.
+2. Configura .NET `10.0.x`.
+3. Ejecuta `dotnet restore` → `dotnet build` → `dotnet test` sobre `CitasApp.Tests`.
+
+Existe además un borrador/referencia `ci.yml` en la raíz (orientado a .NET 9); el workflow canónico del curso es el de `.github/workflows/`.
+
+### Suite local
 
 ```bash
+dotnet test CitasApp.Tests/CitasApp.Tests.csproj
+```
+
+Las pruebas actuales (`CitaTests`, `PacienteTests`, `MedicoTests`) siguen Arrange–Act–Assert con xUnit. **Nota:** hoy son comprobaciones mínimas/placeholder; no ejercitan aún `CitaService` ni los repositorios JSON. Ampliarlas es una mejora recomendada.
+
+> El proyecto `CitasApp.Tests` existe en disco pero **no está incluido en `CitasApp.sln`**. Conviene agregarlo a la solución para que Visual Studio y `dotnet test` a nivel solución lo descubran de forma uniforme.
+
+---
+
+## Instrucciones de ejecución local
+
+### Requisitos
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- Visual Studio 2022 / Rider / VS Code (opcional)
+
+### Opción A — Visual Studio / Rider
+
+1. Abrir `CitasApp.sln`.
+2. Click derecho en `CitasApp.Web` **o** `CitasApp.Api` → **Set as Startup Project**.
+3. F5 / Run.
+4. Web: dashboard en `/`. API: Swagger en `/swagger`.
+
+### Opción B — Línea de comandos
+
+```bash
+# API
 cd CitasApp.Api
 dotnet restore
 dotnet build
 dotnet run
-# abre https://localhost:7080/swagger
+# Swagger: https://localhost:<puerto>/swagger
 ```
 
 ```bash
+# MVC / Dashboard
 cd CitasApp.Web
 dotnet restore
 dotnet build
 dotnet run
-# abre https://localhost:7090/
+# UI: https://localhost:<puerto>/
 ```
 
-Ambos proyectos pueden correr al mismo tiempo (puertos distintos) porque
-comparten Domain/Application/Infrastructure pero tienen su propia carpeta
-`data/` y su propio `appsettings.json`.
+### Cambiar persistencia
 
-## Manejo de excepciones
+En `appsettings.json` de Api o Web:
 
-- `EntidadNoEncontradaException` → HTTP 404 (Api) / `NotFound()` o redirect con mensaje (Web)
-- `OperacionInvalidaException` → HTTP 400 (Api) / mensaje de validacion en el formulario (Web)
-- `PersistenciaException` (Infrastructure) → HTTP 500 generico, detalle solo en logs
-- En la Api, todo pasa por `Middleware/ExceptionHandlingMiddleware.cs`.
-- En el Web, los controladores atrapan las excepciones de Dominio puntualmente
-  y el resto cae en `app.UseExceptionHandler("/Home/Error")`.
+```json
+"Persistencia": {
+  "Proveedor": "Json"
+}
+```
 
-## Modulo Calculadora
+Valores válidos: `Json`, `Csv`, `Sqlite`. La selección ocurre en `DependencyInjection.AddCitasInfrastructure`.
 
-Heredado de la rama `Api-Calculadora`. Vive como puerto de Dominio
-(`ICalculadoraService`) implementado en Application (`CalculadoraService`),
-expuesto tanto en la API (`/api/calculadora/...`) como en una vista del Web
-(`/Calculadora`). Dividir entre cero lanza `OperacionInvalidaException` en
-vez de la excepcion generica `DivideByZeroException`, para mantener
-consistencia con el resto de las reglas de negocio.
+---
+
+## Estructura del repositorio
+
+```
+CitasApp/
+├── CitasApp.sln
+├── .github/workflows/dotnet.yml
+├── ADR-01-Roberto.md
+├── DECLARACION-IA.md
+├── CitasApp.Domain/
+├── CitasApp.Application/
+├── CitasApp.Infrastructure/
+├── CitasApp.Api/
+├── CitasApp.Web/
+└── CitasApp.Tests/
+```
+
+---
 
 ## Capturas de pantalla
 
-### Swagger — CitasApp API
+> Reemplaza las rutas de imagen cuando generes las capturas reales (carpeta sugerida: `docs/`).
+
+### Dashboard / Home (MVC)
+
+![Dashboard CitasApp](docs/dashboard-home.png)
+
+*Placeholder — captura de `Home/Index` con las cards Pacientes, Médicos, Agenda y Calculadora.*
+
+### Agenda de citas
+
+![Agenda de citas](docs/agenda-citas.png)
+
+*Placeholder — captura de `Cita/Index` o formulario `Cita/Agregar`.*
+
+### Swagger — API REST
 
 ![Swagger CitasApp](docs/swagger-citas.png)
 
-### Swagger — Calculadora API
+*Placeholder — captura de `/swagger` con endpoints de Pacientes, Médicos, Citas y Calculadora.*
 
-![Swagger Calculadora](docs/swagger-calculadora.png)
+### Persistencia JSON (opcional)
+
+![Archivos data JSON](docs/data-json.png)
+
+*Placeholder — captura de la carpeta `data/` con `pacientes.json`, `medicos.json`, `citas.json`.*
+
+---
+
+## Licencia / uso académico
+
+Proyecto desarrollado por **Roberto Balmes** para el curso de Arquitectura de Software. Uso educativo.
